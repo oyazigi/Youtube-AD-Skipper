@@ -14,7 +14,6 @@ window.addEventListener('yt-page-data-updated', function () {
     const afterBeginningInterval = setInterval(() => {
       checkAndSkipADS(button, timer);
     }, 5000);
-  });
   
   function checkAndSkipADS(button, timer) {
     if (button && timer) {
@@ -26,4 +25,5 @@ window.addEventListener('yt-page-data-updated', function () {
       }, 200);
     }
   }
+});
   
