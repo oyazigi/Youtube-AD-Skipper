@@ -13,10 +13,10 @@ window.addEventListener('yt-page-data-updated', function () {
 
   const afterBeginningInterval = setInterval(() => {
     checkAndSkipADS(button, timer);
-  }, 5000);
+  }, 4000);
 
   function checkAndSkipADS(button, timer) {
-    if (button && timer) {
+    if (button.offsetWidth > 0) {
       const jumpADInterval = setInterval(() => {
         if (timer.offsetWidth <= 0 || timer.offsetHeight <= 0) {
           button.click();
