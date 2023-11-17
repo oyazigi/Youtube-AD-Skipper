@@ -1,21 +1,25 @@
 {
     "manifest_version": 3,
     "name": "YazigiAdSkipper",
-    "description": "Automatcamente pula os anúncios do youtube quando passam os 5 segundos, icon by: vecteezy",
+    "description": "Remove todos os banners de anúncios do youtube e automaticamente pula os anúncios quando passam-se os 5 segundos, icon by: vecteezy",
     "version": "1.0.0",
     "icons": {
-        "16":"icon_16.png",
-        "48":"icon_48.png",
-        "128":"icon_128.png"
+        "16": "icon_16.png",
+        "48": "icon_48.png",
+        "128": "icon_128.png"
     },
-    "permissions":[
+    "permissions": [
         "scripting",
         "tabs",
-        "activeTab"
+        "activeTab",
+        "storage"
     ],
+    "action": {
+        "default_popup": "popup.html"
+    },
     "content_scripts": [{
         "run_at": "document_start",
-        "matches": [ "*://*.youtube.com/*" ],
-        "js":["script.js"]
+        "matches": ["*://*.youtube.com/*"],
+        "js": ["script.js"]
     }]
 }

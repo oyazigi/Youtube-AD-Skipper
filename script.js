@@ -1,14 +1,17 @@
 window.addEventListener('yt-page-data-updated', function () {
-  let buttonIcon = document.querySelector(".ytp-ad-skip-button-icon-modern");
+    AdSkipper =   localStorage.getItem('AdSkipper') === 'true';
+    WaitVideoAd = localStorage.getItem('WaitVideoAd') === 'true';
+    closeBanner = localStorage.getItem('closeBanner') === 'true';
 
   const adblockInterval = setInterval(() => {
-    checkAndSkipADS(buttonIcon);
+    checkAndSkipADS();
   }, 100);
 
-  function checkAndSkipADS(button) {
-    if (button) {
-      if (button.offsetWidth > 0) {
-        button.click();
+  function checkAndSkipADS() {
+    const skipbtn = document.getElementsByClassName("ytp-ad-skip-button-modern ytp-button")
+    if (skipbtn.length > 0) {
+      if (skipbtn[0].offsetWidth > 0) {
+        skipbtn[0].click();
       }
     }
 

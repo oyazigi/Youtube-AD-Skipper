@@ -1,0 +1,51 @@
+    body{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        height: 300px;
+        width: 340px;
+    }
+
+    h2, b{
+        color:#FF7518;
+    }
+
+    .top-container{
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .container{
+        display: flex;
+        height: 100%;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-evenly;
+        background-color: #f8ceb2;
+    }
+
+
+    input[type="radio"] {
+        /* Hide the default radio button */
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 10px;
+        height: 10px;
+        border: 1px solid #000;
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+    }
+
+    input[type="radio"]:checked {
+        /* Change the border color when the radio button is checked */
+        background-color: #FF7518;
+    }
+
+    button{
+        background-color: red;
+        color:white;
+        border-radius: 10px;
+    }
