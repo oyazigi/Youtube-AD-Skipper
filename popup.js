@@ -1,19 +1,18 @@
 // popup.js
 
-var AdSkipper;
-var WaitVideoAd;
-var closeBanner;
+chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner'], function (result) {
+    AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
+    WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
+    closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
 
-function initializeVariables() {
-    AdSkipper = localStorage.getItem('AdSkipper') === 'true';
-    WaitVideoAd = localStorage.getItem('WaitVideoAd') === 'true';
-    closeBanner = localStorage.getItem('closeBanner') === 'true';
-}
+    document.querySelectorAll('input[name="option"]').forEach(function (radio) {
+        radio.checked = (radio.value === "after" && WaitVideoAd) || (radio.value === "instantly" && !WaitVideoAd);
+    });
 
-    // Initialize variables
-    initializeVariables();
+    document.querySelectorAll('input[name="option1"]').forEach(function (radio) {
+        radio.checked = (radio.value === "activated" && closeBanner) || (radio.value === "deactivated" && !closeBanner);
+    });
 
-    // Function to update button text and localStorage
     function updateAdSkipperButton() {
         let button = document.getElementById("onoff");
         if (AdSkipper) {
@@ -21,13 +20,14 @@ function initializeVariables() {
         } else {
             button.innerText = 'Turn on Ad Skipper';
         }
-        localStorage.setItem('AdSkipper', AdSkipper);
+        chrome.storage.sync.set({ 'AdSkipper': AdSkipper });
     }
-    // Event listener for the "Turn on/off Ad Skipper" button
+
     document.getElementById("onoff").addEventListener("click", function () {
         AdSkipper = !AdSkipper;
         // Update localStorage after AdSkipper is changed
-        localStorage.setItem('AdSkipper', AdSkipper);
+        chrome.storage.sync.set({ 'AdSkipper': AdSkipper });
+       // localStorage.setItem('AdSkipper', AdSkipper);
         // Update button text
         updateAdSkipperButton();
     });
@@ -36,7 +36,8 @@ function initializeVariables() {
     document.querySelectorAll('input[name="option"]').forEach(function (radio) {
         radio.addEventListener("change", function () {
             WaitVideoAd = this.value === "after";
-            localStorage.setItem('WaitVideoAd', WaitVideoAd);
+            chrome.storage.sync.set({ 'WaitVideoAd': WaitVideoAd })
+            //localStorage.setItem('WaitVideoAd', WaitVideoAd);
         });
     });
 
@@ -44,15 +45,17 @@ function initializeVariables() {
     document.querySelectorAll('input[name="option1"]').forEach(function (radio) {
         radio.addEventListener("change", function () {
             closeBanner = this.value === "activated";
-            localStorage.setItem('closeBanner', closeBanner);
+            chrome.storage.sync.set({ 'closeBanner': closeBanner })
+            //localStorage.setItem('closeBanner', closeBanner);
         });
     });
 
     // Initialize the button text based on the stored value
     updateAdSkipperButton();
 
-    // Alerts after initializing variables
-    alert(AdSkipper);
-    alert(WaitVideoAd);
-    alert(closeBanner);
+});
 
+    // Function to update button text and localStorage
+
+    // Event listener for the "Turn on/off Ad Skipper" button
+    
