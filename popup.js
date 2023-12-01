@@ -1,9 +1,10 @@
 // popup.js
 
-chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner'], function (result) {
-    AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
-    WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
-    closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
+chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner', 'Inspecting'], function (result) {
+    let AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
+    let WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
+    let closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
+    let Inspecting = result.Inspecting !== undefined ? result.Inspecting : false;
 
     document.querySelectorAll('input[name="option"]').forEach(function (radio) {
         radio.checked = (radio.value === "after" && WaitVideoAd) || (radio.value === "instantly" && !WaitVideoAd);
@@ -31,6 +32,17 @@ chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner'], function (r
         // Update button text
         updateAdSkipperButton();
     });
+
+    document.getElementById("belement").addEventListener("click", function () {
+        Inspecting = !Inspecting;
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const port = chrome.tabs.connect(tabs[0].id);
+            port.postMessage({ action: 'toggleClickListener', Inspecting: Inspecting });
+            port.disconnect(); // Disconnect to close the connection after sending the message
+        });
+    });
+    
+      
 
     // Event listener for the radio button with name "option"
     document.querySelectorAll('input[name="option"]').forEach(function (radio) {

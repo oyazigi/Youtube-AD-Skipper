@@ -1,15 +1,43 @@
 window.addEventListener('yt-page-data-updated', function () {
-  chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner'], function (result) {
-    AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
-    WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
-    closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
-  
+  chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner', 'Inspecting'], function (result) {
+    let AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
+    let WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
+    let closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
+    let Inspecting = result.Inspecting !== undefined ? result.Inspecting : false;
+
+
   if(AdSkipper){
     const adblockInterval = setInterval(() => {
       checkAndSkipADS();
     }, 100);
   }
- 
+
+  function clicked(e) {
+    console.log(Inspecting);
+    console.log(e.target);
+}
+async function toggleClickListener(varFromPopup) {
+  if (varFromPopup) {
+      document.addEventListener("click", clicked);
+  } else {
+      document.removeEventListener("click", clicked);
+  }
+}
+
+function connectToPopup() {
+  const port = chrome.runtime.connect({ name: 'popup' });
+
+  port.onMessage.addListener(function (msg) {
+      if (msg.action === 'toggleClickListener') {
+          toggleClickListener(msg.Inspecting);
+      }
+  });
+
+  port.onDisconnect.addListener(function () {
+      console.log('Disconnected from popup');
+  });
+}
+
   function checkAndSkipADS() {
     if(WaitVideoAd){
       const skipbtn = document.getElementsByClassName("ytp-ad-skip-button-modern ytp-button")
@@ -21,11 +49,11 @@ window.addEventListener('yt-page-data-updated', function () {
     }else if(!WaitVideoAd){
       const jumpb = document.getElementsByClassName("ytp-ad-skip-button-slot");
       if(jumpb.length > 0){
-        jumpb[0].style.display = block;
+        jumpb[0].style.display = 'block';
         jumpb[0].click();
       }
     }
-   
+    
     if(closeBanner){
           //banner stuff
     const statementBanner = document.querySelector(".ytd-statement-banner-renderer");
@@ -55,6 +83,11 @@ window.addEventListener('yt-page-data-updated', function () {
       }
     });
     }
+
+
   }
+  document.addEventListener('DOMContentLoaded', connectToPopup);
   });
+  
 });
+
