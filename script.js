@@ -1,10 +1,8 @@
 window.addEventListener('yt-page-data-updated', function () {
-  chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner', 'Inspecting'], function (result) {
+  chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner'], function (result) {
     let AdSkipper = result.AdSkipper !== undefined ? result.AdSkipper : true;
     let WaitVideoAd = result.WaitVideoAd !== undefined ? result.WaitVideoAd : true;
     let closeBanner = result.closeBanner !== undefined ? result.closeBanner : true;
-    let Inspecting = result.Inspecting !== undefined ? result.Inspecting : false;
-
 
   if(AdSkipper){
     const adblockInterval = setInterval(() => {
@@ -12,31 +10,66 @@ window.addEventListener('yt-page-data-updated', function () {
     }, 100);
   }
 
-  function clicked(e) {
-    console.log(Inspecting);
-    console.log(e.target);
-}
-async function toggleClickListener(varFromPopup) {
-  if (varFromPopup) {
-      document.addEventListener("click", clicked);
-  } else {
-      document.removeEventListener("click", clicked);
+  function handleMouseOver(e) {
+    // Change the background color when the mouse hovers over an element
+    e.target.style.backgroundColor = "lightblue";
   }
+  
+  function handleMouseOut(e) {
+    // Reset the background color when the mouse leaves an element
+    e.target.style.backgroundColor = ""; // Set it to an empty string to reset to default
+  }
+
+  function clicked(e) {
+    e.preventDefault();
+    console.log(e.target);
+  
+    // Remove the other event listeners
+    document.removeEventListener("click", clicked);
+    document.removeEventListener("mouseover", handleMouseOver);
+    document.removeEventListener("mouseout", handleMouseOut);
+    var result = confirm("Do you want to remove this element?");
+    
+    if (result) {
+      // If the user confirms, hide the clicked element
+      e.target.style.display = "none";
+    } else {
+      // If the user cancels, reset the background color
+      e.target.style.backgroundColor = "";
+    }
+
+  }
+
+async function toggleClickListener(varFromPopup) {
+  if (varFromPopup === true) {
+      document.addEventListener("click", clicked);
+      document.addEventListener("mouseover", handleMouseOver);
+      document.addEventListener("mouseout", handleMouseOut);
+  } 
 }
 
-function connectToPopup() {
-  const port = chrome.runtime.connect({ name: 'popup' });
+chrome.runtime.onMessage.addListener(message => {
+  toggleClickListener(message.myVar);
+  if(message.myVar === false){
+    document.removeEventListener("mouseover", handleMouseOver);
+    document.removeEventListener("mouseout", handleMouseOut);
+    document.removeEventListener("click", clicked);
+  }
+});
+  
+// function connectToPopup() {
+//   const port = chrome.runtime.connect({ name: 'popup' });
 
-  port.onMessage.addListener(function (msg) {
-      if (msg.action === 'toggleClickListener') {
-          toggleClickListener(msg.Inspecting);
-      }
-  });
+//   port.onMessage.addListener(function (msg) {
+//       if (msg.action === 'toggleClickListener') {
+//           toggleClickListener(msg.Inspecting);
+//       }
+//   });
 
-  port.onDisconnect.addListener(function () {
-      console.log('Disconnected from popup');
-  });
-}
+//   port.onDisconnect.addListener(function () {
+//       console.log('Disconnected from popup');
+//   });
+// }
 
   function checkAndSkipADS() {
     if(WaitVideoAd){
@@ -86,7 +119,10 @@ function connectToPopup() {
 
 
   }
-  document.addEventListener('DOMContentLoaded', connectToPopup);
+
+  // connectToPopup();
+
+  
   });
   
 });

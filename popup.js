@@ -33,17 +33,33 @@ chrome.storage.sync.get(['AdSkipper', 'WaitVideoAd', 'closeBanner', 'Inspecting'
         updateAdSkipperButton();
     });
 
-    document.getElementById("belement").addEventListener("click", function () {
-        Inspecting = !Inspecting;
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            const port = chrome.tabs.connect(tabs[0].id);
-            port.postMessage({ action: 'toggleClickListener', Inspecting: Inspecting });
-            port.disconnect(); // Disconnect to close the connection after sending the message
-        });
-    });
+    // document.getElementById("belement").addEventListener("click", function () {
+    //     Inspecting = !Inspecting;
+    //          chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+    //             chrome.tabs.executeScript(tabs[0].id,{file: 'script.js'},()=>{
+    //             chrome.tabs.sendMessage(tabs[0].id,{myVar:Inspecting});
+    //         });
+    //      });
+    // });
     
+    function FireInjectionScript() {
+        // Toggle the variable
+        if(Inspecting){
+            document.getElementById('belement').innerText = "Block element";
+        }else{
+            document.getElementById('belement').innerText = "Cancel";
+        }
+        Inspecting = !Inspecting;
+        // Send the toggled value after the query is complete
+        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+          chrome.tabs.sendMessage(tabs[0].id, { myVar: Inspecting });
+        });
+      }
       
-
+      document.getElementById('belement').addEventListener('click', FireInjectionScript);
+      
+      
+      
     // Event listener for the radio button with name "option"
     document.querySelectorAll('input[name="option"]').forEach(function (radio) {
         radio.addEventListener("change", function () {
