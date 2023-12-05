@@ -12,7 +12,7 @@ Yazigi Ad Skipper is a Chrome extension designed to enhance your YouTube viewing
 
 ## Screenshots
 
-![Popup Interface](interface.png)
+![Popup Interface](interfacev2.png)
 ![Extension Icon](icon_48.png)
 
 ## Installation
